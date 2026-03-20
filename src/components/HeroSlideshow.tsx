@@ -57,19 +57,11 @@ export default function HeroSlideshow() {
 
       {/* 히어로 콘텐츠 — 중앙 */}
       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-white text-center px-6">
-        <p className="text-[11px] tracking-[0.3em] uppercase text-white/60 mb-4">
-          Construction &amp; Remodeling
-        </p>
-        <h1 className="text-4xl md:text-5xl font-bold leading-tight tracking-tight mb-6">
-          공간을 짓고,
+        <h1 className="text-4xl md:text-5xl font-bold leading-tight tracking-tight mb-8">
+          취향을 듣고,
           <br />
-          가치를 완성합니다
+          생활을 담아 공간을 그립니다.
         </h1>
-        <p className="text-[14px] md:text-[15px] text-white/75 leading-relaxed mb-8">
-          DrawU는 신뢰와 기술로 고객의 공간을 완성하는
-          <br className="hidden md:block" />
-          인테리어 전문 기업입니다.
-        </p>
         <Link href="/contact">
           <Button
             size="lg"
