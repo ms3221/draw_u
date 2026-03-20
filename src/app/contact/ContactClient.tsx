@@ -51,19 +51,19 @@ const processSteps = [
 type FormValues = {
   name: string;
   phone: string;
-  email: string;
+  familyMembers: string;
   availableTime: string;
   address: string;
   area: string;
   startDate: string;
   moveInDate: string;
   budget: string;
-  familyMembers: string;
   referral: string;
-  concept: string;
-  otherRequests: string;
+  referralOther: string;
   floorPlan: FileList;
-  conceptPhoto: FileList;
+  projectUrl: string;
+  freeText: string;
+  privacy: boolean;
 };
 
 const inputClass =
@@ -77,8 +77,11 @@ export default function ContactClient() {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = useForm<FormValues>();
+
+  const referralValue = watch("referral");
 
   const onSubmit = () => {
     setSubmitted(true);
@@ -141,17 +144,17 @@ export default function ContactClient() {
             </div>
           ) : (
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-7" noValidate>
-              {/* 이름 */}
+              {/* 성함 */}
               <div>
                 <label className={labelClass}>
-                  이름 <span className="text-red-500">*</span>
+                  성함 <span className="text-red-500">*</span>
                 </label>
                 <input
                   {...register("name", { required: true })}
                   placeholder="홍길동"
                   className={inputClass}
                 />
-                {errors.name && <p className="text-[11px] text-red-400 mt-1">이름을 입력해주세요.</p>}
+                {errors.name && <p className="text-[11px] text-red-400 mt-1">성함을 입력해주세요.</p>}
               </div>
 
               {/* 연락처 */}
@@ -167,28 +170,30 @@ export default function ContactClient() {
                 {errors.phone && <p className="text-[11px] text-red-400 mt-1">연락처를 입력해주세요.</p>}
               </div>
 
-              {/* 메일주소 */}
-              <div>
-                <label className={labelClass}>메일주소</label>
-                <input
-                  {...register("email")}
-                  type="email"
-                  placeholder="example@email.com"
-                  className={inputClass}
-                />
-              </div>
-
-              {/* 연락가능한 시간 */}
+              {/* 가족 구성원 */}
               <div>
                 <label className={labelClass}>
-                  연락가능한 시간 <span className="text-red-500">*</span>
+                  가족 구성원 <span className="text-red-500">*</span>
+                </label>
+                <input
+                  {...register("familyMembers", { required: true })}
+                  placeholder="예: 부부+아이 1명, 반려견 1마리 등"
+                  className={inputClass}
+                />
+                {errors.familyMembers && <p className="text-[11px] text-red-400 mt-1">가족 구성원을 입력해주세요.</p>}
+              </div>
+
+              {/* 통화 가능 시간 */}
+              <div>
+                <label className={labelClass}>
+                  통화 가능 시간 <span className="text-red-500">*</span>
                 </label>
                 <input
                   {...register("availableTime", { required: true })}
-                  placeholder="예) 평일 오후 2시 ~ 6시"
+                  placeholder="예: 평일 오후 2시 이후"
                   className={inputClass}
                 />
-                {errors.availableTime && <p className="text-[11px] text-red-400 mt-1">연락 가능한 시간을 입력해주세요.</p>}
+                {errors.availableTime && <p className="text-[11px] text-red-400 mt-1">통화 가능 시간을 입력해주세요.</p>}
               </div>
 
               {/* 주소 */}
@@ -204,93 +209,88 @@ export default function ContactClient() {
                 {errors.address && <p className="text-[11px] text-red-400 mt-1">주소를 입력해주세요.</p>}
               </div>
 
-              {/* 평수 */}
+              {/* 평형 */}
               <div>
                 <label className={labelClass}>
-                  평수 <span className="text-red-500">*</span>
+                  평형 <span className="text-red-500">*</span>
                 </label>
                 <input
                   {...register("area", { required: true })}
-                  placeholder="예) 34평"
+                  placeholder="예: 34평형"
                   className={inputClass}
                 />
-                {errors.area && <p className="text-[11px] text-red-400 mt-1">평수를 입력해주세요.</p>}
+                {errors.area && <p className="text-[11px] text-red-400 mt-1">평형을 입력해주세요.</p>}
               </div>
 
-              {/* 공사 시작일 / 입주 예정일 */}
-              <div className="grid grid-cols-2 gap-6">
-                <div>
-                  <label className={labelClass}>
-                    공사 시작일 <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    {...register("startDate", { required: true })}
-                    type="date"
-                    className={inputClass}
-                  />
-                  {errors.startDate && <p className="text-[11px] text-red-400 mt-1">날짜를 선택해주세요.</p>}
-                </div>
-                <div>
-                  <label className={labelClass}>
-                    입주 예정일 <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    {...register("moveInDate", { required: true })}
-                    type="date"
-                    className={inputClass}
-                  />
-                  {errors.moveInDate && <p className="text-[11px] text-red-400 mt-1">날짜를 선택해주세요.</p>}
-                </div>
-              </div>
-
-              {/* 공사 예산 */}
+              {/* 공사 일정 */}
               <div>
                 <label className={labelClass}>
-                  공사 예산 <span className="text-red-500">*</span>
+                  공사 일정 <span className="text-red-500">*</span>
+                </label>
+                <div className="grid grid-cols-2 gap-6 mt-1">
+                  <div>
+                    <p className="text-[11px] text-[#bbb] mb-1">공사 시작</p>
+                    <input
+                      {...register("startDate", { required: true })}
+                      type="date"
+                      className={inputClass}
+                    />
+                    {errors.startDate && <p className="text-[11px] text-red-400 mt-1">날짜를 선택해주세요.</p>}
+                  </div>
+                  <div>
+                    <p className="text-[11px] text-[#bbb] mb-1">입주 예정일</p>
+                    <input
+                      {...register("moveInDate", { required: true })}
+                      type="date"
+                      className={inputClass}
+                    />
+                    {errors.moveInDate && <p className="text-[11px] text-red-400 mt-1">날짜를 선택해주세요.</p>}
+                  </div>
+                </div>
+              </div>
+
+              {/* 예산 */}
+              <div>
+                <label className={labelClass}>
+                  예산 <span className="text-red-500">*</span>
                 </label>
                 <input
                   {...register("budget", { required: true })}
-                  placeholder="예) 5,000만원"
+                  placeholder="예: 5,000만원"
                   className={inputClass}
                 />
                 {errors.budget && <p className="text-[11px] text-red-400 mt-1">예산을 입력해주세요.</p>}
               </div>
 
-              {/* 가족 구성원 */}
+              {/* 유입 경로 */}
               <div>
                 <label className={labelClass}>
-                  가족 구성원 <span className="text-red-500">*</span>
-                </label>
-                <input
-                  {...register("familyMembers", { required: true })}
-                  placeholder="예) 부부 + 자녀 1명"
-                  className={inputClass}
-                />
-                {errors.familyMembers && <p className="text-[11px] text-red-400 mt-1">가족 구성원을 입력해주세요.</p>}
-              </div>
-
-              {/* 드로우유를 알게 된 경로 */}
-              <div>
-                <label className={labelClass}>
-                  드로우유를 알게 된 경로 <span className="text-red-500">*</span>
+                  유입 경로 <span className="text-red-500">*</span>
                 </label>
                 <select
                   {...register("referral", { required: true })}
                   className="w-full border-b border-[#d0d0d0] py-2 text-[13px] text-[#2f2f2f] focus:outline-none focus:border-[#2f2f2f] bg-transparent transition-colors appearance-none cursor-pointer"
                 >
                   <option value="">선택해주세요</option>
-                  <option value="naver_blog">네이버 블로그</option>
                   <option value="instagram">인스타그램</option>
-                  <option value="referral">지인 소개</option>
-                  <option value="naver_search">네이버 검색</option>
+                  <option value="blog">블로그</option>
+                  <option value="referral">지인 추천</option>
                   <option value="other">기타</option>
                 </select>
-                {errors.referral && <p className="text-[11px] text-red-400 mt-1">경로를 선택해주세요.</p>}
+                {errors.referral && <p className="text-[11px] text-red-400 mt-1">유입 경로를 선택해주세요.</p>}
+                {referralValue === "other" && (
+                  <input
+                    {...register("referralOther", { required: true })}
+                    placeholder="어떻게 알게 되셨나요?"
+                    className={`${inputClass} mt-4`}
+                  />
+                )}
+                {errors.referralOther && <p className="text-[11px] text-red-400 mt-1">내용을 입력해주세요.</p>}
               </div>
 
-              {/* 참고사진 (건축 도면 또는 평면도) */}
+              {/* 평면도 첨부 */}
               <div>
-                <label className={labelClass}>참고사진 (건축 도면 또는 평면도)</label>
+                <label className={labelClass}>평면도 첨부</label>
                 <input
                   {...register("floorPlan")}
                   type="file"
@@ -298,44 +298,55 @@ export default function ContactClient() {
                   multiple
                   className="w-full pt-2 text-[12px] text-[#888] file:mr-4 file:py-1 file:px-3 file:border file:border-[#d0d0d0] file:text-[11px] file:bg-white file:text-[#555] file:cursor-pointer hover:file:bg-[#f5f5f5] cursor-pointer"
                 />
+                <p className="text-[11px] text-[#aaa] mt-1.5">미첨부 시 원활한 상담이 어려울 수 있습니다.</p>
               </div>
 
-              {/* 컨셉 및 공사내용 */}
+              {/* 관심 프로젝트 URL */}
               <div>
-                <label className={labelClass}>
-                  컨셉 및 공사내용 (최대한 자세히) <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  {...register("concept", { required: true })}
-                  placeholder="원하시는 인테리어 컨셉, 공사 범위, 특이사항 등을 자세히 적어주세요."
-                  rows={5}
-                  className="w-full border-b border-[#d0d0d0] py-2 text-[13px] text-[#2f2f2f] placeholder:text-[#bbb] focus:outline-none focus:border-[#2f2f2f] bg-transparent transition-colors resize-none"
-                />
-                {errors.concept && <p className="text-[11px] text-red-400 mt-1">공사 내용을 입력해주세요.</p>}
-              </div>
-
-              {/* 컨셉 참고사진 */}
-              <div>
-                <label className={labelClass}>컨셉 참고사진</label>
+                <label className={labelClass}>관심 프로젝트 URL</label>
                 <input
-                  {...register("conceptPhoto")}
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  className="w-full pt-2 text-[12px] text-[#888] file:mr-4 file:py-1 file:px-3 file:border file:border-[#d0d0d0] file:text-[11px] file:bg-white file:text-[#555] file:cursor-pointer hover:file:bg-[#f5f5f5] cursor-pointer"
+                  {...register("projectUrl")}
+                  type="url"
+                  placeholder="https://"
+                  className={inputClass}
                 />
               </div>
 
-              {/* 기타 요청사항 */}
-              <div>
-                <label className={labelClass}>기타 요청사항</label>
+              {/* 자유 입력 */}
+              <div className="border border-[#e0e0e0] p-5 mt-2">
+                <p className="text-[13px] font-medium text-[#2f2f2f] leading-snug mb-1">
+                  당신의 취향을 드로우유의 시선으로 채워드릴게요.
+                </p>
+                <p className="text-[12px] text-[#999] mb-4">자유롭게 적어주세요.</p>
                 <textarea
-                  {...register("otherRequests")}
-                  placeholder="추가로 전달하고 싶은 내용을 자유롭게 적어주세요."
-                  rows={3}
-                  className="w-full border-b border-[#d0d0d0] py-2 text-[13px] text-[#2f2f2f] placeholder:text-[#bbb] focus:outline-none focus:border-[#2f2f2f] bg-transparent transition-colors resize-none"
+                  {...register("freeText")}
+                  rows={6}
+                  placeholder="원하는 분위기, 좋아하는 소재, 컬러 톤, 참고하고 싶은 공간 등 무엇이든 좋습니다."
+                  className="w-full text-[13px] text-[#2f2f2f] placeholder:text-[#ccc] focus:outline-none bg-transparent resize-none border-b border-dashed border-[#d0d0d0] pb-2"
                 />
               </div>
+
+              {/* 개인정보 수집 및 이용 동의 */}
+              <div className="flex items-start gap-3 pt-1">
+                <input
+                  {...register("privacy", { required: true })}
+                  type="checkbox"
+                  id="privacy"
+                  className="mt-0.5 w-4 h-4 accent-[#2f2f2f] cursor-pointer shrink-0"
+                />
+                <div className="flex items-center gap-2 flex-wrap">
+                  <label htmlFor="privacy" className="text-[12px] text-[#555] cursor-pointer leading-snug">
+                    개인정보 수집 및 이용에 동의합니다 <span className="text-red-500">*</span>
+                  </label>
+                  <button
+                    type="button"
+                    className="text-[11px] text-[#888] underline underline-offset-2 hover:text-[#2f2f2f] transition-colors"
+                  >
+                    [보기]
+                  </button>
+                </div>
+              </div>
+              {errors.privacy && <p className="text-[11px] text-red-400 -mt-5">개인정보 수집 및 이용에 동의해주세요.</p>}
 
               {/* 제출 버튼 */}
               <Button
