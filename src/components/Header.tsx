@@ -112,13 +112,13 @@ export default function Header() {
 
           {/* SNS 드롭다운 */}
           <div
-            className="relative pb-2"
+            className="relative"
             onMouseEnter={() => setSnsOpen(true)}
             onMouseLeave={() => setSnsOpen(false)}
           >
             <button
               className={cn(
-                "flex items-center gap-1 text-[13px] font-medium tracking-[0.12em] opacity-80 hover:opacity-100 transition-opacity",
+                "flex items-center gap-1 h-8 text-[13px] font-medium tracking-[0.12em] opacity-80 hover:opacity-100 transition-opacity",
                 textColor,
               )}
             >
