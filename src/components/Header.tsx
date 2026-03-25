@@ -71,14 +71,6 @@ export default function Header() {
             )}
             priority
           />
-          <span
-            className={cn(
-              "text-[24px] font-semibold tracking-[0.12em] transition-colors duration-300",
-              isHome && !scrolled ? "text-white" : "text-[#2f2f2f]",
-            )}
-          >
-            DRAW U
-          </span>
         </Link>
 
         {/* PC 네비게이션 */}
@@ -93,10 +85,14 @@ export default function Header() {
                 pathname === item.href ? "opacity-100" : "opacity-80",
               )}
             >
-              <span className={cn(
-                "text-[13px] font-medium tracking-[0.12em] transition-all duration-200",
-                item.korean ? "group-hover:opacity-0 group-hover:-translate-y-1" : "",
-              )}>
+              <span
+                className={cn(
+                  "text-[13px] font-medium tracking-[0.12em] transition-all duration-200",
+                  item.korean
+                    ? "group-hover:opacity-0 group-hover:-translate-y-1"
+                    : "",
+                )}
+              >
                 {item.label}
               </span>
               {item.korean && (
@@ -122,14 +118,25 @@ export default function Header() {
                 textColor,
               )}
             >
-              SNS <ChevronDown size={11} className={cn("transition-transform duration-200", snsOpen ? "rotate-180" : "")} />
+              SNS{" "}
+              <ChevronDown
+                size={11}
+                className={cn(
+                  "transition-transform duration-200",
+                  snsOpen ? "rotate-180" : "",
+                )}
+              />
             </button>
 
             {/* 드롭다운 메뉴 */}
-            <div className={cn(
-              "absolute top-full right-0 w-[150px] bg-white border border-[#e0e0e0] shadow-md transition-all duration-200",
-              snsOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-2 pointer-events-none",
-            )}>
+            <div
+              className={cn(
+                "absolute top-full right-0 w-[150px] bg-white border border-[#e0e0e0] shadow-md transition-all duration-200",
+                snsOpen
+                  ? "opacity-100 translate-y-0 pointer-events-auto"
+                  : "opacity-0 -translate-y-2 pointer-events-none",
+              )}
+            >
               {snsLinks.map((sns) => (
                 <Link
                   key={sns.href}
@@ -138,7 +145,11 @@ export default function Header() {
                   rel="noopener noreferrer"
                   className="flex items-center gap-2.5 px-4 py-3 text-[12px] tracking-[0.06em] text-[#444] hover:bg-[#f5f5f5] hover:text-[#2f2f2f] transition-colors"
                 >
-                  {sns.icon === "naver" ? <BookOpen size={14} /> : <Instagram size={14} />}
+                  {sns.icon === "naver" ? (
+                    <BookOpen size={14} />
+                  ) : (
+                    <Instagram size={14} />
+                  )}
                   {sns.label}
                 </Link>
               ))}
@@ -163,9 +174,6 @@ export default function Header() {
                 style={{ width: "auto", height: 30 }}
                 className="object-contain"
               />
-              <span className="text-[16px] font-semibold tracking-[0.12em] text-[#2f2f2f]">
-                DRAW U
-              </span>
             </div>
             <nav className="flex flex-col px-6 pt-8 gap-7">
               {navItems.map((item) => (
@@ -180,12 +188,16 @@ export default function Header() {
                 >
                   <span>{item.label}</span>
                   {item.korean && (
-                    <span className="text-[11px] text-[#999] tracking-normal">{item.korean}</span>
+                    <span className="text-[11px] text-[#999] tracking-normal">
+                      {item.korean}
+                    </span>
                   )}
                 </Link>
               ))}
               <div className="flex flex-col gap-4 pt-2 border-t border-[#f0f0f0]">
-                <span className="text-[11px] tracking-[0.15em] text-[#bbb] uppercase">SNS</span>
+                <span className="text-[11px] tracking-[0.15em] text-[#bbb] uppercase">
+                  SNS
+                </span>
                 {snsLinks.map((sns) => (
                   <Link
                     key={sns.href}
@@ -195,7 +207,11 @@ export default function Header() {
                     onClick={() => setOpen(false)}
                     className="flex items-center gap-2.5 text-[13px] text-[#555] opacity-70 hover:opacity-100 tracking-[0.06em]"
                   >
-                    {sns.icon === "naver" ? <BookOpen size={14} /> : <Instagram size={14} />}
+                    {sns.icon === "naver" ? (
+                      <BookOpen size={14} />
+                    ) : (
+                      <Instagram size={14} />
+                    )}
                     {sns.label}
                   </Link>
                 ))}
