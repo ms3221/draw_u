@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, ChevronDown, Instagram, BookOpen } from "lucide-react";
+import { Menu, ChevronDown, Instagram, BookOpen, Youtube } from "lucide-react";
 import Image from "next/image";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
@@ -25,6 +25,11 @@ const snsLinks = [
     label: "인스타그램",
     href: "https://www.instagram.com/draw_u_interior/",
     icon: "instagram",
+  },
+  {
+    label: "유튜브",
+    href: "https://youtube.com/@drawu-official?si=NawPzMtLONl3SNU1",
+    icon: "youtube",
   },
 ];
 
@@ -87,7 +92,7 @@ export default function Header() {
             >
               <span
                 className={cn(
-                  "text-[13px] font-medium tracking-[0.12em] transition-all duration-200",
+                  "text-[13px] font-bold tracking-[0.12em] transition-all duration-200",
                   item.korean
                     ? "group-hover:opacity-0 group-hover:-translate-y-1"
                     : "",
@@ -114,7 +119,7 @@ export default function Header() {
           >
             <button
               className={cn(
-                "flex items-center gap-1 h-8 text-[13px] font-medium tracking-[0.12em] opacity-80 hover:opacity-100 transition-opacity",
+                "flex items-center gap-1 h-8 text-[13px] font-bold tracking-[0.12em] opacity-80 hover:opacity-100 transition-opacity",
                 textColor,
               )}
             >
@@ -131,7 +136,7 @@ export default function Header() {
             {/* 드롭다운 메뉴 */}
             <div
               className={cn(
-                "absolute top-full right-0 w-[150px] bg-white border border-[#e0e0e0] shadow-md transition-all duration-200",
+                "absolute top-full right-0 w-[150px] bg-white border border-[#e0e0e0] rounded-lg shadow-md transition-all duration-200 overflow-hidden",
                 snsOpen
                   ? "opacity-100 translate-y-0 pointer-events-auto"
                   : "opacity-0 -translate-y-2 pointer-events-none",
@@ -147,6 +152,8 @@ export default function Header() {
                 >
                   {sns.icon === "naver" ? (
                     <BookOpen size={14} />
+                  ) : sns.icon === "youtube" ? (
+                    <Youtube size={14} />
                   ) : (
                     <Instagram size={14} />
                   )}
@@ -182,7 +189,7 @@ export default function Header() {
                   href={item.href}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    "flex items-center justify-between text-[14px] font-medium tracking-[0.12em] text-[#2f2f2f]",
+                    "flex items-center justify-between text-[14px] font-bold tracking-[0.12em] text-[#2f2f2f]",
                     pathname === item.href ? "opacity-100" : "opacity-60",
                   )}
                 >

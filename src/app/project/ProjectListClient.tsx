@@ -29,7 +29,7 @@ export default function ProjectListClient({
               등록된 프로젝트가 없습니다.
             </p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {projects.map((project) => (
                 <Link
                   key={project.id}
@@ -58,11 +58,6 @@ export default function ProjectListClient({
                     <h3 className="text-[15px] font-semibold text-[#2f2f2f] group-hover:text-[#555] transition-colors duration-200">
                       {project.name}
                     </h3>
-                    {project.address && (
-                      <p className="text-[12px] text-[#999] mt-1">
-                        {project.address}
-                      </p>
-                    )}
                   </div>
                 </Link>
               ))}

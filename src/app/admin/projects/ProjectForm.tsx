@@ -9,7 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { X, Upload, Star, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { uploadImageAction, deleteImageAction } from "./actions";
+import { createClient } from "@/lib/supabase/client";
+import { deleteImageAction } from "./actions";
 import type { Project } from "@/lib/supabase/types";
 
 type DetailEntry = { key: string; value: string | Record<string, string> };
@@ -17,10 +18,10 @@ type DetailEntry = { key: string; value: string | Record<string, string> };
 const DEFAULT_DETAILS: DetailEntry[] = [
   {
     key: "Material",
-    value: { Floor: "", Walls: "", Ceiling: "" },
+    value: { Floor: "Tile", Walls: "Wallpaper", Ceiling: "Wallpaper" },
   },
-  { key: "Size", value: "" },
-  { key: "Year", value: "" },
+  { key: "Size", value: "00py, 000㎡" },
+  { key: "Year", value: new Date().getFullYear().toString() },
   { key: "Location", value: "" },
 ];
 
@@ -59,27 +60,51 @@ export default function ProjectForm({
     if (!files || files.length === 0) return;
     setUploading(true);
 
-    try {
-      const newUrls: string[] = [];
-      for (const file of Array.from(files)) {
-        const fd = new FormData();
-        fd.append("file", file);
-        fd.append("projectId", project?.id ?? "temp");
-        const url = await uploadImageAction(fd);
-        newUrls.push(url);
-      }
+    const supabase = createClient();
+    const projectId = project?.id ?? "temp";
+    const newUrls: string[] = [];
+    let failCount = 0;
 
+    for (const file of Array.from(files)) {
+      try {
+        const ext = file.name.split(".").pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+        const filePath = `${projectId}/${fileName}`;
+
+        const { error } = await supabase.storage
+          .from("project-images")
+          .upload(filePath, file);
+
+        if (error) {
+          failCount++;
+          continue;
+        }
+
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from("project-images").getPublicUrl(filePath);
+
+        newUrls.push(publicUrl);
+      } catch {
+        failCount++;
+      }
+    }
+
+    if (newUrls.length > 0) {
       const updated = [...images, ...newUrls];
       setImages(updated);
       if (!thumbnailUrl && newUrls[0]) {
         setThumbnailUrl(newUrls[0]);
       }
-      toast.success(`이미지 ${newUrls.length}장 업로드 완료`);
-    } catch (err) {
-      toast.error("이미지 업로드 실패: " + (err instanceof Error ? err.message : "알 수 없는 오류"));
-    } finally {
-      setUploading(false);
     }
+
+    if (failCount > 0) {
+      toast.error(`${failCount}장 업로드 실패, ${newUrls.length}장 성공`);
+    } else {
+      toast.success(`이미지 ${newUrls.length}장 업로드 완료`);
+    }
+
+    setUploading(false);
   }
 
   async function handleRemoveImage(url: string) {
