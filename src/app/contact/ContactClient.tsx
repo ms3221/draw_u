@@ -8,43 +8,33 @@ import { Button } from "@/components/ui/button";
 const processSteps = [
   {
     num: "01",
-    title: "미팅 예약",
-    desc: "견적문의를 남겨 주시면 확인 후 전화드리고 사무실 미팅 일정을 잡습니다.",
+    title: "상담 신청",
+    desc: "고객님의 취향과 라이프스타일이 담긴 신청서를 작성해 주시면, 내용을 꼼꼼히 검토한 후 1~2일 내에 유선으로 미팅 예약을 안내해 드립니다.",
   },
   {
     num: "02",
-    title: "사무실 미팅",
-    desc: "고객님이 제공해주신 아파트 평면도를 토대로 드로우유의 시안을 보여드립니다.",
+    title: "1차 미팅 및 견적 상담",
+    desc: "예약된 일정에 맞춰 대면 미팅을 진행합니다. 원하시는 공간의 방향성에 대해 깊이 있는 이야기를 나누고, 이를 바탕으로 개략적인 디자인 방향과 1차 견적을 안내해 드립니다.",
   },
   {
     num: "03",
-    title: "디자인 계약",
-    desc: "계약금 입금 후 고객님께서 주신 피드백과 니즈를 상세히 반영한 디자인과 견적을 안내해 드립니다.",
+    title: "현장 실측 및 2차 미팅",
+    desc: "실제 프로젝트 현장을 방문하여 정밀한 실측을 진행합니다. 공간의 구조와 채광, 동선을 직접 확인하며 최적의 레이아웃을 도출하기 위한 심도 있는 상담을 이어갑니다.",
   },
   {
     num: "04",
-    title: "실측 후 디자인 수정",
-    desc: "현장 정밀실측과 컨디션을 확인합니다. 그리고 최종 디자인과 견적을 작성합니다.",
+    title: "프로젝트 제안",
+    desc: "드로우유만의 감각을 담은 프로젝트 제안서와 상세 견적을 브리핑해 드립니다. 공간의 완성도를 높일 마감재를 함께 확인하며, 세부적인 디테일에 대한 원활한 소통이 이루어집니다.",
   },
   {
     num: "05",
-    title: "최종계약",
-    desc: "최종 디자인과 견적서가 완료되면 최종계약과 일정표를 안내해드립니다.",
+    title: "시공 진행 및 공사진행 리포팅",
+    desc: "최종 확정된 디자인과 견적을 바탕으로 본격적인 시공에 착수합니다. 전용 소통 채널 및 고객 공유 페이지를 통해 매일의 공정 현황과 현장 사진을 투명하게 공유해 드립니다.",
   },
   {
     num: "06",
-    title: "공사 진행",
-    desc: "최종 결정된 시안 견적을 바탕으로 공사를 진행합니다. 단체 채팅방과 고객 공유페이지에 공사 내용과 공정별 사진을 보내드립니다.",
-  },
-  {
-    num: "07",
-    title: "공사 마감",
-    desc: "공사 중 하자 발생을 최소화하여 진행합니다.",
-  },
-  {
-    num: "08",
-    title: "A/S",
-    desc: "A/S 기간은 공사 종료 후 1년이며, 문제 발생 시 신속히 보수 관리를 해드립니니다.",
+    title: "마감 공사",
+    desc: "공간의 완성도를 결정짓는 가장 중요한 공정입니다. 준공 청소 이후, 퀄리티를 극대화하는 디테일 작업이 진행됩니다. 기본 7일간의 집중 케어를 원칙으로 하며, 현장 상황에 따라 완벽한 마무리를 위해 기간이 유동적으로 조정될 수 있습니다.",
   },
 ];
 
@@ -93,6 +83,31 @@ export default function ContactClient() {
       <div className="max-w-[1280px] mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-[40%_60%] gap-16 items-start">
         {/* 좌측 — 프로세스 타임라인 */}
         <div className="md:sticky md:top-[120px]">
+          {/* 안내사항 */}
+          <h2 className="text-2xl font-bold text-[#2f2f2f] mb-6">안내사항</h2>
+          <div className="space-y-4 text-[13px] text-[#555] leading-[1.8] mb-14">
+            <p>
+              <span className="text-[#2f2f2f] mr-1.5">◌</span>
+              남겨주신 소중한 정보를 바탕으로 담당 디자이너가 사전 검토를 진행합니다. 접수 후 영업일 기준 1~2일 이내에 개별 연락을 드려 상세한 안내를 도와드립니다.
+            </p>
+            <p>
+              <span className="text-[#2f2f2f] mr-1.5">◌</span>
+              더욱 만족스러운 공간을 그려내기 위해, 첫 만남은 고객님의 일상과 이야기를 편안하게 나누는 인터뷰 형식으로 진행하고 있습니다.
+            </p>
+            <p>
+              <span className="text-[#2f2f2f] mr-1.5">◌</span>
+              나누어 주신 소중한 이야기를 바탕으로, 고객님의 취향과 예산에 꼭 맞는 드로우유의 컨셉 제안서와 가견적서를 준비해 드립니다.
+            </p>
+            <p>
+              <span className="text-[#2f2f2f] mr-1.5">◌</span>
+              현장을 직접 방문하기 전 안내해 드리는 디자인과 견적은 실제 현장 상황에 따라 부득이하게 변경될 수 있는 점 참고 부탁드립니다.
+            </p>
+            <p>
+              <span className="text-[#2f2f2f] mr-1.5">◌</span>
+              집중도 있는 상담을 위해 미팅은 예약제로 진행하고 있으며, 평일 방문이 어려우신 분들을 위해 주말과 공휴일 상담도 열려 있습니다.
+            </p>
+          </div>
+
           <p className="text-[11px] tracking-[0.3em] uppercase text-[#999] mb-2">How We Work</p>
           <h2 className="text-2xl font-bold text-[#2f2f2f] mb-10">상담 진행 프로세스</h2>
 
@@ -123,7 +138,7 @@ export default function ContactClient() {
         {/* 우측 — 폼 */}
         <div>
           <p className="text-[11px] tracking-[0.3em] uppercase text-[#999] mb-2">Online Inquiry</p>
-          <h2 className="text-2xl font-bold text-[#2f2f2f] mb-10">견적 문의</h2>
+          <h2 className="text-2xl font-bold text-[#2f2f2f] mb-10">상담신청</h2>
 
           {submitted ? (
             <div className="flex flex-col items-start gap-4 py-12">

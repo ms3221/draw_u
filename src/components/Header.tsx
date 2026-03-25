@@ -56,7 +56,7 @@ export default function Header() {
         headerBg,
       )}
     >
-      <div className="max-w-[1280px] mx-auto w-full px-6 flex items-center justify-between">
+      <div className="w-full px-6 flex items-center justify-between">
         {/* 로고 */}
         <Link href="/" className="flex items-center gap-3">
           <Image
