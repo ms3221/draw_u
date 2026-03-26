@@ -30,6 +30,9 @@ export const metadata: Metadata = {
   },
   robots: { index: true, follow: true },
   alternates: { canonical: "https://www.draw-u.kr" },
+  verification: {
+    other: { "naver-site-verification": "17c4cda2fedc99b8f2a8e80f88f41a4d078cc7ab" },
+  },
 };
 
 export default function RootLayout({
