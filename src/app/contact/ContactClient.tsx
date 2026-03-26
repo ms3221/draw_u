@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
 
 const processSteps = [
   {
@@ -67,6 +68,7 @@ const labelClass = "block text-[11px] tracking-[0.1em] text-[#888] mb-1";
 
 export default function ContactClient() {
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const {
     register,
@@ -78,8 +80,50 @@ export default function ContactClient() {
 
   const referralValue = watch("referral");
 
-  const onSubmit = () => {
-    setSubmitted(true);
+  const onSubmit = async (data: FormValues) => {
+    setSubmitting(true);
+    try {
+      const supabase = createClient();
+
+      // 평면도 파일 업로드
+      const floorPlanUrls: string[] = [];
+      if (data.floorPlan?.length) {
+        for (const file of Array.from(data.floorPlan)) {
+          const ext = file.name.split(".").pop();
+          const path = `floor-plans/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+          const { error } = await supabase.storage.from("contact").upload(path, file);
+          if (!error) {
+            const { data: urlData } = supabase.storage.from("contact").getPublicUrl(path);
+            floorPlanUrls.push(urlData.publicUrl);
+          }
+        }
+      }
+
+      const { error } = await supabase.from("contact_inquiries").insert({
+        name: data.name,
+        phone: data.phone,
+        family_members: data.familyMembers,
+        available_time: data.availableTime,
+        address: data.address,
+        area: data.area,
+        start_date: data.startDate,
+        move_in_date: data.moveInDate,
+        budget: data.budget,
+        referral: data.referral,
+        referral_other: data.referralOther || null,
+        floor_plan_urls: floorPlanUrls.length ? floorPlanUrls : null,
+        project_url: data.projectUrl || null,
+        free_text: data.freeText || null,
+      });
+
+      if (error) throw error;
+      setSubmitted(true);
+    } catch (err) {
+      console.error(err);
+      alert("문의 접수 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -376,9 +420,10 @@ export default function ContactClient() {
               {/* 제출 버튼 */}
               <Button
                 type="submit"
-                className="rounded-none bg-[#2f2f2f] hover:bg-black text-white text-[12px] tracking-[0.15em] py-5 font-semibold cursor-pointer mt-2"
+                disabled={submitting}
+                className="rounded-none bg-[#2f2f2f] hover:bg-black text-white text-[12px] tracking-[0.15em] py-5 font-semibold cursor-pointer mt-2 disabled:opacity-50"
               >
-                확인
+                {submitting ? "접수 중..." : "확인"}
               </Button>
             </form>
           )}
