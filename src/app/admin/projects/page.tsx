@@ -5,7 +5,7 @@ import { getAllProjects } from "@/lib/dal/projects";
 import { deleteProjectAction, logoutAction } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Pencil, Trash2, LogOut } from "lucide-react";
+import { Plus, Pencil, Trash2, LogOut, ArrowLeft } from "lucide-react";
 
 export default async function AdminProjectsPage() {
   const supabase = await createClient();
@@ -31,6 +31,15 @@ export default async function AdminProjectsPage() {
             </h1>
           </div>
           <div className="flex items-center gap-3">
+            <Link href="/admin">
+              <Button
+                variant="outline"
+                className="rounded-none border-[#d0d0d0] text-[12px] tracking-[0.1em] h-[38px] gap-1.5"
+              >
+                <ArrowLeft size={14} />
+                홈으로
+              </Button>
+            </Link>
             <Link href="/admin/projects/new">
               <Button className="rounded-none bg-[#2f2f2f] hover:bg-black text-[12px] tracking-[0.1em] h-[38px] gap-1.5">
                 <Plus size={14} />

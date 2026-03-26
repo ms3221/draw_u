@@ -34,7 +34,7 @@ export default function LoginClient() {
     }
 
     toast.success("로그인 성공");
-    router.push("/admin/projects");
+    router.push("/admin");
     router.refresh();
   }
 

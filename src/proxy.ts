@@ -20,7 +20,7 @@ export async function proxy(request: NextRequest) {
   // 로그인 상태에서 /admin/login 접근 시 리다이렉트
   if (request.nextUrl.pathname === "/admin/login" && hasSession) {
     const url = request.nextUrl.clone();
-    url.pathname = "/admin/projects";
+    url.pathname = "/admin";
     return NextResponse.redirect(url);
   }
 
