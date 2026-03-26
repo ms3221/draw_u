@@ -13,28 +13,33 @@ const processSteps = [
   },
   {
     num: "02",
-    title: "1차 미팅 및 견적 상담",
-    desc: "예약된 일정에 맞춰 대면 미팅을 진행합니다. 원하시는 공간의 방향성에 대해 깊이 있는 이야기를 나누고, 이를 바탕으로 개략적인 디자인 방향과 1차 견적을 안내해 드립니다.",
+    title: "1차미팅 (인터뷰)",
+    desc: "예약된 일정에 맞추어 사무실 내방 미팅을 진행합니다. 고객님의 라이프스타일과 공간이 지향하는 가치에 대해 깊이 있는 대화를 나누며, 이를 바탕으로 구체적인 디자인 방향성과 최적의 예산 계획을 수립합니다.",
   },
   {
     num: "03",
-    title: "현장 실측 및 2차 미팅",
-    desc: "실제 프로젝트 현장을 방문하여 정밀한 실측을 진행합니다. 공간의 구조와 채광, 동선을 직접 확인하며 최적의 레이아웃을 도출하기 위한 심도 있는 상담을 이어갑니다.",
+    title: "2차미팅 (디자인 컨셉 및 가견적)",
+    desc: "1차 상담 내용을 면밀히 분석하여 구체화된 디자인 컨셉을 제안합니다. 해당 컨셉이 반영된 기초 도면을 바탕으로, 프로젝트의 규모와 자재를 고려한 상세 견적서를 작성하여 투명하게 안내해 드립니다.",
   },
   {
     num: "04",
-    title: "프로젝트 제안",
-    desc: "드로우유만의 감각을 담은 프로젝트 제안서와 상세 견적을 브리핑해 드립니다. 공간의 완성도를 높일 마감재를 함께 확인하며, 세부적인 디테일에 대한 원활한 소통이 이루어집니다.",
+    title: "계약미팅 및 현장실측",
+    desc: "확정된 디자인 컨셉과 예산 계획을 바탕으로 정식 계약을 체결합니다. 이후 정밀한 현장 실측을 통해 기존 도면과의 오차를 세밀하게 점검하며, 실제 공간에 최적화된 시공 데이터로 업데이트합니다.",
   },
   {
     num: "05",
-    title: "시공 진행 및 공사진행 리포팅",
-    desc: "최종 확정된 디자인과 견적을 바탕으로 본격적인 시공에 착수합니다. 전용 소통 채널 및 고객 공유 페이지를 통해 매일의 공정 현황과 현장 사진을 투명하게 공유해 드립니다.",
+    title: "디자인 미팅",
+    desc: "약 4회에 걸친 디자인 미팅을 통해 상상을 현실로 구체화합니다. 질감과 조도까지 고려한 3D 시안과 체계적인 공사 계획을 공유하며 시공 전 완벽한 결과물을 미리 확인하실 수 있습니다.",
   },
   {
     num: "06",
-    title: "마감 공사",
-    desc: "공간의 완성도를 결정짓는 가장 중요한 공정입니다. 준공 청소 이후, 퀄리티를 극대화하는 디테일 작업이 진행됩니다. 기본 7일간의 집중 케어를 원칙으로 하며, 현장 상황에 따라 완벽한 마무리를 위해 기간이 유동적으로 조정될 수 있습니다.",
+    title: "공사 진행 및 일일리포트",
+    desc: "최종 확정된 디자인과 견적을 바탕으로 본격적인 시공에 착수합니다. 전용 소통 채널 및 고객 공유 페이지를 통해 매일의 공정 현황과 현장 사진을 투명하게 공유해 드립니다.",
+  },
+  {
+    num: "07",
+    title: "마감공사",
+    desc: "공간의 완성도를 결정짓는 가장 중요한 공정입니다. 준공 청소 이후, 퀄리티를 극대화하는 세밀한 디테일 작업과 '7일간의 집중 케어'를 통해 완벽한 마무리를 실현합니다. 이 과정에서 공간의 가장 아름다운 순간을 기록하는 사진 촬영이 병행되며, 현장 상황에 맞춰 최상의 결과물을 아카이빙합니다.",
   },
 ];
 
@@ -81,62 +86,67 @@ export default function ContactClient() {
     <div className="bg-white pt-[100px]">
       {/* 2컬럼 메인 */}
       <div className="max-w-[1280px] mx-auto px-6 py-16 grid grid-cols-1 md:grid-cols-[40%_60%] gap-16 items-start">
-        {/* 좌측 — 프로세스 타임라인 */}
-        <div className="md:sticky md:top-[120px]">
-          {/* 안내사항 */}
-          <h2 className="text-2xl font-bold text-[#2f2f2f] mb-6">안내사항</h2>
-          <div className="space-y-4 text-[13px] text-[#555] leading-[1.8] mb-14">
-            <p>
-              <span className="text-[#2f2f2f] mr-1.5">◌</span>
-              남겨주신 소중한 정보를 바탕으로 담당 디자이너가 사전 검토를 진행합니다. 접수 후 영업일 기준 1~2일 이내에 개별 연락을 드려 상세한 안내를 도와드립니다.
-            </p>
-            <p>
-              <span className="text-[#2f2f2f] mr-1.5">◌</span>
-              더욱 만족스러운 공간을 그려내기 위해, 첫 만남은 고객님의 일상과 이야기를 편안하게 나누는 인터뷰 형식으로 진행하고 있습니다.
-            </p>
-            <p>
-              <span className="text-[#2f2f2f] mr-1.5">◌</span>
-              나누어 주신 소중한 이야기를 바탕으로, 고객님의 취향과 예산에 꼭 맞는 드로우유의 컨셉 제안서와 가견적서를 준비해 드립니다.
-            </p>
-            <p>
-              <span className="text-[#2f2f2f] mr-1.5">◌</span>
-              현장을 직접 방문하기 전 안내해 드리는 디자인과 견적은 실제 현장 상황에 따라 부득이하게 변경될 수 있는 점 참고 부탁드립니다.
-            </p>
-            <p>
-              <span className="text-[#2f2f2f] mr-1.5">◌</span>
-              집중도 있는 상담을 위해 미팅은 예약제로 진행하고 있으며, 평일 방문이 어려우신 분들을 위해 주말과 공휴일 상담도 열려 있습니다.
-            </p>
+        {/* 좌측 — 모바일에서는 contents로 풀어서 개별 order 적용, 데스크톱에서는 하나의 sticky 컬럼 */}
+        <div className="contents md:block md:sticky md:top-[120px]">
+          {/* 안내사항 — 모바일: 맨 아래 / 데스크톱: 좌측 상단 */}
+          <div className="order-3 md:order-none">
+            <h2 className="text-2xl font-bold text-[#2f2f2f] mb-6">안내사항</h2>
+            <div className="space-y-4 text-[13px] text-[#555] leading-[1.8] mb-14">
+              <p>
+                <span className="text-[#2f2f2f] mr-1.5">◌</span>
+                남겨주신 소중한 정보를 바탕으로 담당 디자이너가 사전 검토를 진행합니다. 접수 후 영업일 기준 1~2일 이내에 개별 연락을 드려 상세한 안내를 도와드립니다.
+              </p>
+              <p>
+                <span className="text-[#2f2f2f] mr-1.5">◌</span>
+                더욱 만족스러운 공간을 그려내기 위해, 첫 만남은 고객님의 일상과 이야기를 편안하게 나누는 인터뷰 형식으로 진행하고 있습니다.
+              </p>
+              <p>
+                <span className="text-[#2f2f2f] mr-1.5">◌</span>
+                나누어 주신 소중한 이야기를 바탕으로, 고객님의 취향과 예산에 꼭 맞는 드로우유의 컨셉 제안서와 가견적서를 준비해 드립니다.
+              </p>
+              <p>
+                <span className="text-[#2f2f2f] mr-1.5">◌</span>
+                현장을 직접 방문하기 전 안내해 드리는 디자인과 견적은 실제 현장 상황에 따라 부득이하게 변경될 수 있는 점 참고 부탁드립니다.
+              </p>
+              <p>
+                <span className="text-[#2f2f2f] mr-1.5">◌</span>
+                집중도 있는 상담을 위해 미팅은 예약제로 진행하고 있으며, 평일 방문이 어려우신 분들을 위해 주말과 공휴일 상담도 열려 있습니다.
+              </p>
+            </div>
           </div>
 
-          <p className="text-[11px] tracking-[0.3em] uppercase text-[#999] mb-2">How We Work</p>
-          <h2 className="text-2xl font-bold text-[#2f2f2f] mb-10">상담 진행 프로세스</h2>
+          {/* 상담 진행 프로세스 — 모바일: 맨 위 / 데스크톱: 좌측 하단 */}
+          <div className="order-1 md:order-none">
+            <p className="text-[11px] tracking-[0.3em] uppercase text-[#999] mb-2">How We Work</p>
+            <h2 className="text-2xl font-bold text-[#2f2f2f] mb-10">상담 진행 프로세스</h2>
 
-          <div className="flex flex-col">
-            {processSteps.map((step, idx) => (
-              <div key={step.num} className="flex gap-4 relative">
-                {/* 타임라인 선 */}
-                <div className="flex flex-col items-center">
-                  <div className="w-8 h-8 rounded-full border border-[#2f2f2f] flex items-center justify-center shrink-0 bg-white z-10">
-                    <span className="text-[10px] font-mono text-[#2f2f2f]">{step.num}</span>
+            <div className="flex flex-col">
+              {processSteps.map((step, idx) => (
+                <div key={step.num} className="flex gap-4 relative">
+                  {/* 타임라인 선 */}
+                  <div className="flex flex-col items-center">
+                    <div className="w-8 h-8 rounded-full border border-[#2f2f2f] flex items-center justify-center shrink-0 bg-white z-10">
+                      <span className="text-[10px] font-mono text-[#2f2f2f]">{step.num}</span>
+                    </div>
+                    {idx < processSteps.length - 1 && (
+                      <div className="w-px flex-1 bg-[#e0e0e0] my-1" />
+                    )}
                   </div>
-                  {idx < processSteps.length - 1 && (
-                    <div className="w-px flex-1 bg-[#e0e0e0] my-1" />
-                  )}
+                  {/* 텍스트 */}
+                  <div className="pb-8">
+                    <p className="text-[14px] font-semibold text-[#2f2f2f] leading-none mb-1.5">
+                      {step.title}
+                    </p>
+                    <p className="text-[12px] text-[#888] leading-relaxed">{step.desc}</p>
+                  </div>
                 </div>
-                {/* 텍스트 */}
-                <div className="pb-8">
-                  <p className="text-[14px] font-semibold text-[#2f2f2f] leading-none mb-1.5">
-                    {step.title}
-                  </p>
-                  <p className="text-[12px] text-[#888] leading-relaxed">{step.desc}</p>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
-        {/* 우측 — 폼 */}
-        <div>
+        {/* 우측 — 폼: 모바일 두 번째 / 데스크톱 우측 */}
+        <div className="order-2 md:order-none">
           <p className="text-[11px] tracking-[0.3em] uppercase text-[#999] mb-2">Online Inquiry</p>
           <h2 className="text-2xl font-bold text-[#2f2f2f] mb-10">상담신청</h2>
 

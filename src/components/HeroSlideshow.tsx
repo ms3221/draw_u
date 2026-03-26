@@ -1,18 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff } from "lucide-react";
+import { Film, Images } from "lucide-react";
+
+const slides = [
+  { url: "/images/home/1.jpg", alt: "인테리어 1" },
+  { url: "/images/home/2.jpg", alt: "인테리어 2" },
+  { url: "/images/home/3.jpg", alt: "인테리어 3" },
+  { url: "/images/home/4.jpg", alt: "인테리어 4" },
+  { url: "/images/home/5.jpg", alt: "인테리어 5" },
+];
 
 export default function HeroSlideshow() {
-  const [overlayOn, setOverlayOn] = useState(true);
+  const [mode, setMode] = useState<"video" | "slide">("video");
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    if (mode !== "slide") return;
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % slides.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [mode]);
 
   return (
-    <section className="relative h-screen min-h-[600px] overflow-hidden">
-      {/* 배경 비디오 */}
+    <section className="relative h-screen min-h-150 overflow-hidden">
+      {/* 비디오 배경 */}
       <video
-        className="absolute inset-0 w-full h-full object-cover"
+        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+          mode === "video" ? "opacity-100" : "opacity-0"
+        }`}
         src="https://cdn.fastseller.shop/uploads/drawu_home.mp4"
         autoPlay
         loop
@@ -20,16 +39,26 @@ export default function HeroSlideshow() {
         playsInline
       />
 
+      {/* 슬라이드 이미지들 */}
+      {slides.map((slide, idx) => (
+        <div
+          key={idx}
+          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1500 ease-in-out ${
+            mode === "slide" ? "" : "!opacity-0"
+          }`}
+          style={{
+            backgroundImage: `url('${slide.url}')`,
+            opacity: mode === "slide" && idx === current ? 1 : 0,
+          }}
+          aria-hidden={mode !== "slide" || idx !== current}
+        />
+      ))}
+
       {/* 다크 오버레이 */}
-      <div
-        className={`absolute inset-0 transition-opacity duration-500 ${
-          overlayOn ? "bg-black/50 opacity-100" : "opacity-0"
-        }`}
-      />
+      <div className="absolute inset-0 bg-black/50" />
 
       {/* 히어로 콘텐츠 — 중앙 */}
       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-white text-center px-6">
-
         <h1 className="text-4xl md:text-5xl font-bold leading-tight tracking-tight mb-8">
           취향을 듣고,
           <br />
@@ -46,14 +75,35 @@ export default function HeroSlideshow() {
         </Link>
       </div>
 
-      {/* 오버레이 토글 버튼 */}
-      <button
-        onClick={() => setOverlayOn((prev) => !prev)}
-        className="absolute bottom-6 right-6 z-20 p-2.5 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors duration-200 text-white"
-        aria-label={overlayOn ? "오버레이 끄기" : "오버레이 켜기"}
-      >
-        {overlayOn ? <EyeOff size={18} /> : <Eye size={18} />}
-      </button>
+      {/* 하단 컨트롤 */}
+      <div className="absolute bottom-8 right-12 z-20 flex items-center gap-3">
+        {/* 슬라이드 인디케이터 (슬라이드 모드일 때만) */}
+        {mode === "slide" && (
+          <div className="flex items-center gap-2 mr-2">
+            {slides.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrent(idx)}
+                aria-label={`슬라이드 ${idx + 1}`}
+                className={`w-2 h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                  idx === current
+                    ? "bg-white scale-125"
+                    : "bg-white/40 hover:bg-white/70"
+                }`}
+              />
+            ))}
+          </div>
+        )}
+
+        {/* 모드 토글 버튼 */}
+        <button
+          onClick={() => setMode((prev) => (prev === "video" ? "slide" : "video"))}
+          className="p-2.5 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors duration-200 text-white"
+          aria-label={mode === "video" ? "이미지 슬라이드로 전환" : "비디오로 전환"}
+        >
+          {mode === "video" ? <Images size={18} /> : <Film size={18} />}
+        </button>
+      </div>
     </section>
   );
 }
