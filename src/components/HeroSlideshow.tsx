@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Film, Images } from "lucide-react";
+// import { Film, Images } from "lucide-react";
 
 const slides = [
   { url: "/images/home/1.jpg", alt: "인테리어 1" },
@@ -14,21 +14,20 @@ const slides = [
 ];
 
 export default function HeroSlideshow() {
-  const [mode, setMode] = useState<"video" | "slide">("video");
+  // const [mode, setMode] = useState<"video" | "slide">("video");
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
-    if (mode !== "slide") return;
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
-    }, 5000);
+    }, 1000);
     return () => clearInterval(timer);
-  }, [mode]);
+  }, []);
 
   return (
     <section className="relative h-screen min-h-150 overflow-hidden">
-      {/* 비디오 배경 */}
-      <video
+      {/* 비디오 배경 — 나중에 다시 사용할 수 있으므로 주석 처리 */}
+      {/* <video
         className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
           mode === "video" ? "opacity-100" : "opacity-0"
         }`}
@@ -37,20 +36,18 @@ export default function HeroSlideshow() {
         loop
         muted
         playsInline
-      />
+      /> */}
 
       {/* 슬라이드 이미지들 */}
       {slides.map((slide, idx) => (
         <div
           key={idx}
-          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1500 ease-in-out ${
-            mode === "slide" ? "" : "!opacity-0"
-          }`}
+          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1500 ease-in-out`}
           style={{
             backgroundImage: `url('${slide.url}')`,
-            opacity: mode === "slide" && idx === current ? 1 : 0,
+            opacity: idx === current ? 1 : 0,
           }}
-          aria-hidden={mode !== "slide" || idx !== current}
+          aria-hidden={idx !== current}
         />
       ))}
 
@@ -77,32 +74,30 @@ export default function HeroSlideshow() {
 
       {/* 하단 컨트롤 */}
       <div className="absolute bottom-8 right-12 z-20 flex items-center gap-3">
-        {/* 슬라이드 인디케이터 (슬라이드 모드일 때만) */}
-        {mode === "slide" && (
-          <div className="flex items-center gap-2 mr-2">
-            {slides.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrent(idx)}
-                aria-label={`슬라이드 ${idx + 1}`}
-                className={`w-2 h-2 rounded-full transition-all duration-300 cursor-pointer ${
-                  idx === current
-                    ? "bg-white scale-125"
-                    : "bg-white/40 hover:bg-white/70"
-                }`}
-              />
-            ))}
-          </div>
-        )}
+        {/* 슬라이드 인디케이터 */}
+        <div className="flex items-center gap-2 mr-2">
+          {slides.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrent(idx)}
+              aria-label={`슬라이드 ${idx + 1}`}
+              className={`w-2 h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                idx === current
+                  ? "bg-white scale-125"
+                  : "bg-white/40 hover:bg-white/70"
+              }`}
+            />
+          ))}
+        </div>
 
-        {/* 모드 토글 버튼 */}
-        <button
+        {/* 모드 토글 버튼 — 나중에 다시 사용할 수 있으므로 주석 처리 */}
+        {/* <button
           onClick={() => setMode((prev) => (prev === "video" ? "slide" : "video"))}
           className="p-2.5 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors duration-200 text-white"
           aria-label={mode === "video" ? "이미지 슬라이드로 전환" : "비디오로 전환"}
         >
           {mode === "video" ? <Images size={18} /> : <Film size={18} />}
-        </button>
+        </button> */}
       </div>
     </section>
   );
