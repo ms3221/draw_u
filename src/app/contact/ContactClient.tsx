@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
+import { submitToNotion } from "./actions";
 
 const processSteps = [
   {
@@ -130,6 +131,30 @@ export default function ContactClient() {
       });
 
       if (error) throw error;
+
+      // Notion 전송 (Supabase 백업 성공 후)
+      const notionResult = await submitToNotion({
+        name: data.name,
+        phone: data.phone,
+        familyMembers: data.familyMembers,
+        availableTime: data.availableTime,
+        address: data.address,
+        area: data.area,
+        startDate: data.startDate,
+        moveInDate: data.moveInDate,
+        budget: data.budget,
+        referral: data.referral,
+        referralOther: data.referralOther || undefined,
+        floorPlanUrls: floorPlanUrls.length ? floorPlanUrls : undefined,
+        referencePhotoUrls: referencePhotoUrls.length ? referencePhotoUrls : undefined,
+        projectUrl: data.projectUrl || undefined,
+        freeText: data.freeText || undefined,
+      });
+
+      if (!notionResult.success) {
+        console.error("Notion 전송 실패 (Supabase 백업은 완료)");
+      }
+
       setSubmitted(true);
       setTimeout(() => {
         document
