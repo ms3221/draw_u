@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 // import { Film, Images } from "lucide-react";
 
 const slides = [
-  { url: "/images/home/1.jpg", alt: "인테리어 1" },
-  { url: "/images/home/2.jpg", alt: "인테리어 2" },
-  { url: "/images/home/3.jpg", alt: "인테리어 3" },
-  { url: "/images/home/4.jpg", alt: "인테리어 4" },
   { url: "/images/home/5.jpg", alt: "인테리어 5" },
+  { url: "/images/home/4.jpg", alt: "인테리어 4" },
+  { url: "/images/home/3.jpg", alt: "인테리어 3" },
+  { url: "/images/home/2.jpg", alt: "인테리어 2" },
+  { url: "/images/home/1.jpg", alt: "인테리어 1" },
 ];
 
 export default function HeroSlideshow() {
@@ -20,7 +20,7 @@ export default function HeroSlideshow() {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
-    }, 1000);
+    }, 2000);
     return () => clearInterval(timer);
   }, []);
 
