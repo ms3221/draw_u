@@ -12,9 +12,7 @@ export default function ProjectDetailClient({
 }: {
   project: Project;
 }) {
-  const allImages = project.thumbnail_url
-    ? [project.thumbnail_url, ...project.images]
-    : project.images;
+  const allImages = project.images;
 
   const rawDetails = project.details as Record<string, unknown>;
 

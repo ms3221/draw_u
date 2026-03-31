@@ -1,15 +1,28 @@
 "use client";
 
 import { useState, useRef } from "react";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { X, Upload, Star, Plus, Trash2 } from "lucide-react";
+import { X, Upload, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  rectSortingStrategy,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import SortableImage from "./SortableImage";
 import { deleteImageAction } from "./actions";
 import type { Project } from "@/lib/supabase/types";
 
@@ -55,6 +68,20 @@ export default function ProjectForm({
     parseDetails((project?.details as Record<string, unknown>) ?? {})
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 },
+    })
+  );
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = images.indexOf(active.id as string);
+    const newIndex = images.indexOf(over.id as string);
+    setImages(arrayMove(images, oldIndex, newIndex));
+  }
 
   async function handleUpload(files: FileList | null) {
     if (!files || files.length === 0) return;
@@ -412,52 +439,26 @@ export default function ProjectForm({
         </button>
 
         {images.length > 0 && (
-          <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mt-4">
-            {images.map((url, i) => (
-              <div key={i} className="relative group">
-                <div className="relative aspect-square overflow-hidden bg-[#f5f5f5]">
-                  <Image
-                    src={url}
-                    alt={`이미지 ${i + 1}`}
-                    fill
-                    className="object-cover"
-                    sizes="150px"
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext items={images} strategy={rectSortingStrategy}>
+              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 mt-4">
+                {images.map((url, i) => (
+                  <SortableImage
+                    key={url}
+                    url={url}
+                    index={i}
+                    isThumbnail={thumbnailUrl === url}
+                    onSetThumbnail={() => setThumbnailUrl(url)}
+                    onRemove={() => handleRemoveImage(url)}
                   />
-                </div>
-
-                {/* 오버레이 */}
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setThumbnailUrl(url)}
-                    className={`p-1.5 rounded-full ${
-                      thumbnailUrl === url
-                        ? "bg-yellow-400 text-black"
-                        : "bg-white/80 text-[#555] hover:bg-white"
-                    }`}
-                    title="대표 이미지로 지정"
-                  >
-                    <Star size={14} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveImage(url)}
-                    className="p-1.5 rounded-full bg-white/80 text-red-500 hover:bg-white"
-                    title="삭제"
-                  >
-                    <X size={14} />
-                  </button>
-                </div>
-
-                {/* 대표 이미지 표시 */}
-                {thumbnailUrl === url && (
-                  <div className="absolute top-1 left-1 bg-yellow-400 text-black text-[9px] px-1.5 py-0.5 font-medium">
-                    대표
-                  </div>
-                )}
+                ))}
               </div>
-            ))}
-          </div>
+            </SortableContext>
+          </DndContext>
         )}
       </div>
 
