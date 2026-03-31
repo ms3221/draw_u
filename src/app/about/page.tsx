@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "회사 소개",
-  description: "draw_u 인테리어의 철학과 팀을 소개합니다.",
+  description: "드로우유(DRAWU) 인테리어의 철학과 팀을 소개합니다.",
   alternates: { canonical: "https://www.draw-u.kr/about" },
 };
 

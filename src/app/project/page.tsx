@@ -4,7 +4,7 @@ import ProjectListClient from "./ProjectListClient";
 
 export const metadata: Metadata = {
   title: "프로젝트",
-  description: "draw_u 인테리어의 시공 사례를 확인하세요.",
+  description: "드로우유(DRAWU) 인테리어의 시공 사례를 확인하세요.",
   alternates: { canonical: "https://www.draw-u.kr/project" },
 };
 

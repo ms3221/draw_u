@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "견적 진행 절차",
-  description: "draw_u의 견적 신청부터 프로젝트 제안까지 4단계 프로세스를 안내합니다.",
+  description: "드로우유(DRAWU)의 견적 신청부터 프로젝트 제안까지 4단계 프로세스를 안내합니다.",
   alternates: { canonical: "https://www.draw-u.kr/faq" },
 };
 
