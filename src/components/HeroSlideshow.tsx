@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 // import { Film, Images } from "lucide-react";
 
 const slides = [
-  { url: "/images/home/5.jpg", alt: "인테리어 5" },
-  { url: "/images/home/4.jpg", alt: "인테리어 4" },
-  { url: "/images/home/3.jpg", alt: "인테리어 3" },
-  { url: "/images/home/2.jpg", alt: "인테리어 2" },
-  { url: "/images/home/1.jpg", alt: "인테리어 1" },
+  { url: "/images/home/5.jpg", alt: "드로우유 인테리어 시공 사례 5" },
+  { url: "/images/home/4.jpg", alt: "드로우유 인테리어 시공 사례 4" },
+  { url: "/images/home/3.jpg", alt: "드로우유 인테리어 시공 사례 3" },
+  { url: "/images/home/2.jpg", alt: "드로우유 인테리어 시공 사례 2" },
+  { url: "/images/home/1.jpg", alt: "드로우유 인테리어 시공 사례 1" },
 ];
 
 export default function HeroSlideshow() {
@@ -57,6 +57,7 @@ export default function HeroSlideshow() {
       {/* 히어로 콘텐츠 — 중앙 */}
       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-white text-center px-6">
         <h1 className="text-4xl md:text-5xl font-bold leading-tight tracking-tight mb-8">
+          <span className="sr-only">드로우유 - </span>
           취향을 듣고,
           <br />
           생활을 담아 공간을 그립니다.
