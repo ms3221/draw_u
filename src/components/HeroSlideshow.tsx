@@ -56,8 +56,10 @@ export default function HeroSlideshow() {
 
       {/* 히어로 콘텐츠 — 중앙 */}
       <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-white text-center px-6">
+        <p className="text-sm md:text-base tracking-[0.3em] uppercase mb-4 text-white/80">
+          드로우유
+        </p>
         <h1 className="text-4xl md:text-5xl font-bold leading-tight tracking-tight mb-8">
-          <span className="sr-only">드로우유 - </span>
           취향을 듣고,
           <br />
           생활을 담아 공간을 그립니다.

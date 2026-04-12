@@ -16,12 +16,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: project.name,
-    description: project.description || `${project.name} 시공 사례`,
+    title: `${project.name} | 드로우유 인테리어 시공 사례`,
+    description: project.description || `드로우유 인테리어 - ${project.name} 시공 사례`,
+    alternates: { canonical: `https://www.draw-u.kr/project/${id}` },
     openGraph: {
-      title: project.name,
-      description: project.description || `${project.name} 시공 사례`,
-      images: project.thumbnail_url ? [project.thumbnail_url] : [],
+      title: `${project.name} | 드로우유 인테리어`,
+      description: project.description || `드로우유 인테리어 - ${project.name} 시공 사례`,
+      url: `https://www.draw-u.kr/project/${id}`,
+      images: project.thumbnail_url ? [project.thumbnail_url] : ["/images/og.png"],
     },
   };
 }
