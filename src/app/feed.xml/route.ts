@@ -1,11 +1,20 @@
-import { getPublishedProjects } from "@/lib/dal/projects";
+import { createClient } from "@supabase/supabase-js";
 
 const BASE_URL = "https://www.draw-u.kr";
 
 export async function GET() {
-  const projects = await getPublishedProjects();
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 
-  const items = projects
+  const { data: projects } = await supabase
+    .from("projects")
+    .select("id, name, description, created_at")
+    .eq("is_published", true)
+    .order("sort_order", { ascending: true });
+
+  const items = (projects ?? [])
     .map(
       (project) => `
     <item>
