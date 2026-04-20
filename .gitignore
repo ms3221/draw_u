@@ -45,5 +45,6 @@ next-env.d.ts
 .mcp.json
 docs
 .agents/
+.omc/
 skills-lock.json
 /견적서_draw_u.md
