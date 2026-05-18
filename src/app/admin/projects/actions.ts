@@ -3,31 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/admin-auth";
 import type { ProjectInsert, ProjectUpdate } from "@/lib/supabase/types";
-
-async function requireAdmin() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/admin/login");
-  }
-
-  // admin_users 테이블에서 권한 확인
-  const { data: admin } = await supabase
-    .from("admin_users")
-    .select("id")
-    .eq("email", user.email)
-    .single();
-
-  if (!admin) {
-    throw new Error("관리자 권한이 없습니다.");
-  }
-
-  return { user, supabase };
-}
 
 export async function createProjectAction(formData: FormData) {
   const { supabase } = await requireAdmin();

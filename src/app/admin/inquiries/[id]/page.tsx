@@ -2,6 +2,9 @@ import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import ResendNotionButton from "@/components/ResendNotionButton";
+import DeleteInquiryButton from "@/components/DeleteInquiryButton";
 import { ArrowLeft } from "lucide-react";
 
 const referralLabels: Record<string, string> = {
@@ -44,11 +47,18 @@ export default async function AdminInquiryDetailPage({
     { label: "예산", value: item.budget },
     {
       label: "유입 경로",
-      value:
-        referralLabels[item.referral] || item.referral + (item.referral_other ? ` (${item.referral_other})` : ""),
+      value: item.referral
+        ? referralLabels[item.referral] ||
+          item.referral +
+            (item.referral_other ? ` (${item.referral_other})` : "")
+        : null,
     },
     { label: "관심 프로젝트 URL", value: item.project_url },
     { label: "자유 입력", value: item.free_text },
+    {
+      label: "접수일시",
+      value: new Date(item.created_at).toLocaleString("ko-KR"),
+    },
   ];
 
   return (
@@ -67,46 +77,80 @@ export default async function AdminInquiryDetailPage({
               {new Date(item.created_at).toLocaleString("ko-KR")}
             </p>
           </div>
-          <Link href="/admin/inquiries">
-            <Button
-              variant="outline"
-              className="rounded-none border-[#d0d0d0] text-[12px] tracking-[0.1em] h-[38px] gap-1.5"
-            >
-              <ArrowLeft size={14} />
-              목록으로
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <ResendNotionButton
+              inquiryId={item.id}
+              alreadySynced={item.notion_synced}
+              size="sm"
+            />
+            <DeleteInquiryButton
+              inquiryId={item.id}
+              redirectTo="/admin/inquiries"
+              size="sm"
+            />
+            <Link href="/admin/inquiries">
+              <Button
+                variant="outline"
+                className="rounded-none border-[#d0d0d0] text-[12px] tracking-[0.1em] h-[38px] gap-1.5"
+              >
+                <ArrowLeft size={14} />
+                목록으로
+              </Button>
+            </Link>
+          </div>
         </div>
 
-        {/* 상세 정보 */}
+        {/* 상세 정보 (모든 항목 표시, 값 없으면 —) */}
         <div className="bg-white border border-[#e0e0e0]">
-          {fields.map(
-            (field) =>
-              field.value && (
-                <div
-                  key={field.label}
-                  className="flex border-b border-[#f0f0f0] last:border-b-0"
-                >
-                  <div className="w-[140px] shrink-0 p-4 text-[11px] tracking-[0.1em] text-[#999] bg-[#fafafa]">
-                    {field.label}
-                  </div>
-                  <div className="p-4 text-[13px] text-[#2f2f2f] whitespace-pre-wrap">
-                    {field.label === "관심 프로젝트 URL" ? (
-                      <a
-                        href={field.value}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 hover:underline"
-                      >
-                        {field.value}
-                      </a>
-                    ) : (
-                      field.value
-                    )}
-                  </div>
-                </div>
-              )
-          )}
+          {fields.map((field) => (
+            <div
+              key={field.label}
+              className="flex border-b border-[#f0f0f0] last:border-b-0"
+            >
+              <div className="w-[140px] shrink-0 p-4 text-[11px] tracking-[0.1em] text-[#999] bg-[#fafafa]">
+                {field.label}
+              </div>
+              <div className="p-4 text-[13px] text-[#2f2f2f] whitespace-pre-wrap">
+                {!field.value ? (
+                  <span className="text-[#bbb]">—</span>
+                ) : field.label === "관심 프로젝트 URL" ? (
+                  <a
+                    href={field.value}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline"
+                  >
+                    {field.value}
+                  </a>
+                ) : (
+                  field.value
+                )}
+              </div>
+            </div>
+          ))}
+
+          {/* Notion 동기화 상태 */}
+          <div className="flex border-b border-[#f0f0f0] last:border-b-0">
+            <div className="w-[140px] shrink-0 p-4 text-[11px] tracking-[0.1em] text-[#999] bg-[#fafafa]">
+              Notion 상태
+            </div>
+            <div className="p-4 text-[13px] flex items-center gap-3">
+              {item.notion_synced ? (
+                <>
+                  <Badge variant="secondary">전송됨</Badge>
+                  {item.notion_synced_at && (
+                    <span className="text-[12px] text-[#999]">
+                      {new Date(item.notion_synced_at).toLocaleString("ko-KR")}
+                    </span>
+                  )}
+                </>
+              ) : (
+                <>
+                  <Badge variant="destructive">미전송</Badge>
+                </>
+              )}
+            </div>
+          </div>
         </div>
 
         {/* 평면도 */}

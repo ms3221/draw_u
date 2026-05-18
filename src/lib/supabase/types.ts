@@ -14,3 +14,26 @@ export type Project = {
 
 export type ProjectInsert = Omit<Project, "id" | "created_at" | "updated_at">;
 export type ProjectUpdate = Partial<ProjectInsert>;
+
+export type ContactInquiry = {
+  id: string;
+  name: string;
+  phone: string;
+  family_members: string | null;
+  available_time: string | null;
+  address: string | null;
+  area: string | null;
+  start_date: string | null;
+  move_in_date: string | null;
+  budget: string | null;
+  referral: string | null;
+  referral_other: string | null;
+  floor_plan_urls: string[] | null;
+  reference_photo_urls: string[] | null;
+  project_url: string | null;
+  free_text: string | null;
+  notion_synced: boolean;
+  notion_page_id: string | null;
+  notion_synced_at: string | null;
+  created_at: string;
+};

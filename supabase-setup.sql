@@ -123,3 +123,102 @@ CREATE POLICY "Admins can delete project images"
       JOIN admin_users adm ON au.email = adm.email
     )
   );
+
+-- =============================================
+-- 5. contact_inquiries 테이블 (상담 신청)
+-- =============================================
+-- NOTE: 이 테이블은 기존에 Supabase 대시보드에서 직접 생성되어
+--       소스 관리 밖에 있었다. 아래는 코드가 기대하는 스키마의 문서화이며,
+--       이미 운영 중인 테이블이 있다면 "마이그레이션" 블록만 실행하면 된다.
+
+-- (참고용 전체 정의 — 테이블이 없을 때만 실행)
+CREATE TABLE IF NOT EXISTS contact_inquiries (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  family_members TEXT,
+  available_time TEXT,
+  address TEXT,
+  area TEXT,
+  start_date TEXT,
+  move_in_date TEXT,
+  budget TEXT,
+  referral TEXT,
+  referral_other TEXT,
+  floor_plan_urls JSONB,
+  reference_photo_urls JSONB,
+  project_url TEXT,
+  free_text TEXT,
+  notion_synced BOOLEAN DEFAULT false,
+  notion_page_id TEXT,
+  notion_synced_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- =============================================
+-- ▼▼▼ 마이그레이션: Supabase 대시보드 → SQL Editor 에서 실행 ▼▼▼
+-- (이미 운영 중인 contact_inquiries 테이블에 Notion 동기화 상태 컬럼 추가)
+-- =============================================
+ALTER TABLE contact_inquiries
+  ADD COLUMN IF NOT EXISTS notion_synced BOOLEAN DEFAULT false,
+  ADD COLUMN IF NOT EXISTS notion_page_id TEXT,
+  ADD COLUMN IF NOT EXISTS notion_synced_at TIMESTAMPTZ;
+
+-- 관리자 판별 헬퍼 함수.
+-- RLS 정책에서 auth.users 를 직접 조회하면 authenticated 역할에
+-- SELECT 권한이 없어 "permission denied for table users" 가 발생한다.
+-- SECURITY DEFINER 로 소유자 권한 실행 + JWT 이메일만 사용해 이를 회피한다.
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM admin_users
+    WHERE email = (auth.jwt() ->> 'email')
+  );
+$$;
+
+GRANT EXECUTE ON FUNCTION public.is_admin() TO authenticated, anon;
+
+-- 관리자 UPDATE 허용 (재전송 시 동기화 상태 갱신용)
+DROP POLICY IF EXISTS "Admins can update inquiries" ON contact_inquiries;
+CREATE POLICY "Admins can update inquiries"
+  ON contact_inquiries FOR UPDATE
+  USING (public.is_admin())
+  WITH CHECK (public.is_admin());
+
+-- 관리자 DELETE 허용 (문의 삭제용)
+DROP POLICY IF EXISTS "Admins can delete inquiries" ON contact_inquiries;
+CREATE POLICY "Admins can delete inquiries"
+  ON contact_inquiries FOR DELETE
+  USING (public.is_admin());
+
+-- 관리자: contact 버킷 첨부파일 삭제 허용 (문의 삭제 시 정리용)
+DROP POLICY IF EXISTS "Admins can delete contact files" ON storage.objects;
+CREATE POLICY "Admins can delete contact files"
+  ON storage.objects FOR DELETE
+  USING (bucket_id = 'contact' AND public.is_admin());
+
+-- ⚠️ 확인 필요: contact_inquiries 의 RLS 가 활성화되어 있고,
+--    (1) 상담 폼의 anon INSERT 정책, (2) 관리자 SELECT 정책이
+--    이미 존재해야 한다 (기존 폼/관리자 페이지가 동작 중이라면 이미 있음).
+--    아래는 누락 시 참고용 — 이미 있으면 실행하지 말 것.
+--
+-- ALTER TABLE contact_inquiries ENABLE ROW LEVEL SECURITY;
+--
+-- CREATE POLICY "Anyone can insert inquiries"
+--   ON contact_inquiries FOR INSERT WITH CHECK (true);
+--
+-- CREATE POLICY "Admins can read inquiries"
+--   ON contact_inquiries FOR SELECT
+--   USING (
+--     auth.uid() IN (
+--       SELECT au.id FROM auth.users au
+--       JOIN admin_users adm ON au.email = adm.email
+--     )
+--   );
+-- =============================================
+-- ▲▲▲ 마이그레이션 끝 ▲▲▲
+-- =============================================

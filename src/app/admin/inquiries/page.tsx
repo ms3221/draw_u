@@ -2,6 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import ResendNotionButton from "@/components/ResendNotionButton";
+import DeleteInquiryButton from "@/components/DeleteInquiryButton";
 import { ArrowLeft } from "lucide-react";
 
 export default async function AdminInquiriesPage() {
@@ -55,6 +58,8 @@ export default async function AdminInquiriesPage() {
                   <th className="text-left p-4 font-normal">주소</th>
                   <th className="text-left p-4 font-normal">평형</th>
                   <th className="text-left p-4 font-normal">예산</th>
+                  <th className="text-left p-4 font-normal">Notion</th>
+                  <th className="text-left p-4 font-normal">관리</th>
                 </tr>
               </thead>
               <tbody>
@@ -75,6 +80,35 @@ export default async function AdminInquiriesPage() {
                     <td className="p-4 text-[13px] text-[#888]">{item.address}</td>
                     <td className="p-4 text-[13px] text-[#888]">{item.area}</td>
                     <td className="p-4 text-[13px] text-[#888]">{item.budget}</td>
+                    <td className="p-4">
+                      {item.notion_synced ? (
+                        <div className="flex flex-col gap-1.5">
+                          <Badge variant="secondary" className="w-fit">
+                            전송됨
+                          </Badge>
+                          {item.notion_synced_at && (
+                            <span className="text-[11px] text-[#aaa]">
+                              {new Date(
+                                item.notion_synced_at
+                              ).toLocaleString("ko-KR")}
+                            </span>
+                          )}
+                          <ResendNotionButton
+                            inquiryId={item.id}
+                            alreadySynced
+                            size="xs"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <Badge variant="destructive">미전송</Badge>
+                          <ResendNotionButton inquiryId={item.id} size="xs" />
+                        </div>
+                      )}
+                    </td>
+                    <td className="p-4">
+                      <DeleteInquiryButton inquiryId={item.id} size="xs" />
+                    </td>
                   </tr>
                 ))}
               </tbody>

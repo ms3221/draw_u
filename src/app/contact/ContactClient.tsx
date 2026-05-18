@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
-import { submitToNotion } from "./actions";
+import { submitInquiry } from "./actions";
 
 const processSteps = [
   {
@@ -112,28 +112,8 @@ export default function ContactClient() {
         uploadFiles(data.referencePhotos, "reference-photos"),
       ]);
 
-      const { error } = await supabase.from("contact_inquiries").insert({
-        name: data.name,
-        phone: data.phone,
-        family_members: data.familyMembers,
-        available_time: data.availableTime,
-        address: data.address,
-        area: data.area,
-        start_date: data.startDate,
-        move_in_date: data.moveInDate,
-        budget: data.budget,
-        referral: data.referral,
-        referral_other: data.referralOther || null,
-        floor_plan_urls: floorPlanUrls.length ? floorPlanUrls : null,
-        reference_photo_urls: referencePhotoUrls.length ? referencePhotoUrls : null,
-        project_url: data.projectUrl || null,
-        free_text: data.freeText || null,
-      });
-
-      if (error) throw error;
-
-      // Notion 전송 (Supabase 백업 성공 후)
-      const notionResult = await submitToNotion({
+      // 저장 + Notion 전송을 서버에서 단일 처리 (동기화 상태 함께 기록)
+      const result = await submitInquiry({
         name: data.name,
         phone: data.phone,
         familyMembers: data.familyMembers,
@@ -146,13 +126,17 @@ export default function ContactClient() {
         referral: data.referral,
         referralOther: data.referralOther || undefined,
         floorPlanUrls: floorPlanUrls.length ? floorPlanUrls : undefined,
-        referencePhotoUrls: referencePhotoUrls.length ? referencePhotoUrls : undefined,
+        referencePhotoUrls: referencePhotoUrls.length
+          ? referencePhotoUrls
+          : undefined,
         projectUrl: data.projectUrl || undefined,
         freeText: data.freeText || undefined,
       });
 
-      if (!notionResult.success) {
-        console.error("Notion 전송 실패 (Supabase 백업은 완료)");
+      if (!result.success) throw new Error("문의 저장 실패");
+
+      if (!result.notionSynced) {
+        console.error("Notion 전송 실패 (DB 백업은 완료, 관리자 재전송 가능)");
       }
 
       setSubmitted(true);
