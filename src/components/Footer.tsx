@@ -9,7 +9,8 @@ export default function Footer() {
         </span>
         <div className="text-[11px] leading-relaxed space-y-1">
           <p>광주광역시 광산구 수완로 9번길 31, 1층 드로우유 인테리어</p>
-          <p>대표 : 유두선 &nbsp;|&nbsp; 사업자등록번호 : 878-07-02657</p>
+          <p>대표 : 노우림 &nbsp;|&nbsp; 사업자등록번호 : 869-81-03894</p>
+          <p>실내건축 공사업 면허 : 광주광산-26-나-11</p>
           <p>Tel : 1533-6967 &nbsp;|&nbsp; E-mail : drawuco@gmail.com</p>
         </div>
         <div className="flex items-center gap-4 pt-1 text-[11px]">
