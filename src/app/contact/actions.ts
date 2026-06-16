@@ -45,7 +45,12 @@ export async function submitToNotion(
     연락처: { rich_text: [{ text: { content: data.phone } }] },
     "가족 구성원": { rich_text: [{ text: { content: data.familyMembers } }] },
     "연락 가능한 시간": {
-      multi_select: [{ name: data.availableTime }],
+      // multi_select 옵션 이름엔 쉼표를 쓸 수 없어 쉼표 기준으로 쪼개 여러 태그로 전송
+      multi_select: data.availableTime
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .map((name) => ({ name })),
     },
     "현장 주소": { rich_text: [{ text: { content: data.address } }] },
     "공사 범위": { rich_text: [{ text: { content: data.area } }] },
