@@ -1,11 +1,21 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPublishedProjectById } from "@/lib/dal/projects";
+import { getPublishedProjectById, getPublishedProjects } from "@/lib/dal/projects";
 import ProjectDetailClient from "./ProjectDetailClient";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
+
+// ISR: 1시간마다 재생성. admin 수정 시 revalidatePath(`/project/${id}`) 로 즉시 갱신.
+export const revalidate = 3600;
+
+// 빌드 시점에 공개 프로젝트 상세를 미리 생성 → 첫 방문부터 빠르게.
+// 빌드 이후 추가된 프로젝트는 첫 요청 시 on-demand 생성 후 캐싱(dynamicParams 기본 true).
+export async function generateStaticParams() {
+  const projects = await getPublishedProjects();
+  return projects.map((p) => ({ id: p.id }));
+}
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;

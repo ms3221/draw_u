@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://www.draw-u.kr/project" },
 };
 
+// ISR: 1시간마다 재생성. admin 수정 시 revalidatePath("/project") 로 즉시 갱신.
+export const revalidate = 3600;
+
 export default async function ProjectPage() {
   const projects = await getPublishedProjects();
 
