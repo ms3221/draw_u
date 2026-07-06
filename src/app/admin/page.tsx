@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { FolderOpen, MessageSquareText } from "lucide-react";
+import { FolderOpen, MessageSquareText, Sparkles } from "lucide-react";
 
 export default async function AdminHomePage() {
   const supabase = await createClient();
@@ -28,6 +28,12 @@ export default async function AdminHomePage() {
       desc: `접수된 문의 ${inquiryCount ?? 0}건`,
       href: "/admin/inquiries",
       icon: MessageSquareText,
+    },
+    {
+      title: "AI 가구 배치",
+      desc: "공간 사진에 가구를 합성 (Beta)",
+      href: "/admin/furniture",
+      icon: Sparkles,
     },
   ];
 
