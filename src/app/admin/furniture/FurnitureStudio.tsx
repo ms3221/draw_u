@@ -29,6 +29,7 @@ import {
   krwPerImage,
   MAX_COUNT,
   MAX_FURNITURE,
+  isOpenAIModel,
   type Resolution,
 } from "@/lib/gemini-models";
 import {
@@ -567,24 +568,30 @@ export default function FurnitureStudio({
       </Panel>
 
       <Panel title="해상도">
-        <div className="flex gap-2">
-          {RESOLUTIONS.map((r) => (
-            <button
-              key={r}
-              onClick={() => setResolution(r)}
-              className={`flex-1 h-[38px] border text-[13px] transition-colors ${
-                resolution === r
-                  ? "border-[#2f2f2f] bg-[#2f2f2f] text-white"
-                  : "border-[#e0e0e0] text-[#666] hover:border-[#bbb]"
-              }`}
-            >
-              {r}
-              {r === DEFAULT_RESOLUTION && (
-                <span className="ml-1 text-[10px] opacity-60">기본</span>
-              )}
-            </button>
-          ))}
-        </div>
+        {isOpenAIModel(model) ? (
+          <p className="text-[12px] text-[#999] py-1.5">
+            GPT는 원본 비율·크기에 맞춰 자동으로 정해집니다.
+          </p>
+        ) : (
+          <div className="flex gap-2">
+            {RESOLUTIONS.map((r) => (
+              <button
+                key={r}
+                onClick={() => setResolution(r)}
+                className={`flex-1 h-[38px] border text-[13px] transition-colors ${
+                  resolution === r
+                    ? "border-[#2f2f2f] bg-[#2f2f2f] text-white"
+                    : "border-[#e0e0e0] text-[#666] hover:border-[#bbb]"
+                }`}
+              >
+                {r}
+                {r === DEFAULT_RESOLUTION && (
+                  <span className="ml-1 text-[10px] opacity-60">기본</span>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
       </Panel>
 
       <Panel title="생성 장수">

@@ -376,7 +376,14 @@ export async function generateFurniture(
       projectId: input.projectId,
       images: generated,
       kind: "generate",
-      meta: { userPrompt, enhancedPrompt, fullPrompt: prompt, model, resolution },
+      meta: {
+        userPrompt,
+        enhancedPrompt,
+        fullPrompt: prompt,
+        model,
+        // GPT 는 size auto 로 호출되므로 선택된 해상도 대신 auto 로 기록
+        resolution: isOpenAIModel(model) ? "auto" : resolution,
+      },
       inputRefs,
       createdBy: user.email ?? "",
     });
@@ -600,7 +607,7 @@ export async function editFurniture(input: EditInput): Promise<GenerateResult> {
         enhancedPrompt: "",
         fullPrompt: prompt,
         model,
-        resolution,
+        resolution: isOpenAIModel(model) ? "auto" : resolution,
       },
       inputRefs,
       createdBy: user.email ?? "",

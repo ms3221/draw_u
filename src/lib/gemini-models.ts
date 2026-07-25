@@ -32,8 +32,8 @@ export const IMAGE_MODELS: ImageModel[] = [
     id: "gpt-image-2",
     label: "GPT Image 2",
     desc: "OpenAI · 비교 테스트용 (비용 추정치, OPENAI_API_KEY 필요)",
-    // 토큰 과금이라 해상도별 근사치 (medium 품질 고정, 픽셀 수 비례 추정)
-    usd: { "1K": 0.053, "2K": 0.21, "4K": 0.42 },
+    // size auto + medium 품질 고정 — 해상도 무관 단일 추정치
+    usd: { "1K": 0.053, "2K": 0.053, "4K": 0.053 },
     provider: "openai",
   },
 ];
