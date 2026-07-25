@@ -222,3 +222,82 @@ CREATE POLICY "Admins can delete contact files"
 -- =============================================
 -- ▲▲▲ 마이그레이션 끝 ▲▲▲
 -- =============================================
+
+-- =============================================
+-- 6. 가구 스튜디오: 프로젝트별 라이브러리 영속화 & 팀 공유
+--    (2026-07-23, 마이그레이션 furniture_studio_library 로 적용됨)
+-- =============================================
+ALTER TABLE furniture_projects
+  ADD COLUMN IF NOT EXISTS base_url TEXT,
+  ADD COLUMN IF NOT EXISTS sketch_url TEXT;
+
+CREATE TABLE IF NOT EXISTS furniture_assets (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_id UUID NOT NULL REFERENCES furniture_projects(id) ON DELETE CASCADE,
+  url TEXT NOT NULL,
+  original_name TEXT,
+  created_by TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_furniture_assets_project
+  ON furniture_assets (project_id, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS furniture_results (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_id UUID NOT NULL REFERENCES furniture_projects(id) ON DELETE CASCADE,
+  url TEXT NOT NULL,
+  kind TEXT NOT NULL CHECK (kind IN ('generate','edit')),
+  user_prompt TEXT NOT NULL DEFAULT '',
+  enhanced_prompt TEXT NOT NULL DEFAULT '',
+  full_prompt TEXT NOT NULL,
+  model TEXT NOT NULL,
+  resolution TEXT NOT NULL,
+  input_refs JSONB NOT NULL DEFAULT '[]',
+  created_by TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_furniture_results_project
+  ON furniture_results (project_id, created_at DESC);
+
+-- RLS: 서버 액션도 anon key + 유저 쿠키로 동작 → 정책 필수. SELECT은 관리자 전원(팀 공유).
+ALTER TABLE furniture_assets ENABLE ROW LEVEL SECURITY;
+ALTER TABLE furniture_results ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Admins full access assets" ON furniture_assets
+  FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "Admins full access results" ON furniture_results
+  FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());
+
+-- 버킷: 클라이언트 직접 업로드(4.5MB 서버 액션 본문 제한 우회) + public read
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('furniture-studio', 'furniture-studio', true)
+ON CONFLICT (id) DO NOTHING;
+
+CREATE POLICY "Public can read furniture studio files"
+  ON storage.objects FOR SELECT USING (bucket_id = 'furniture-studio');
+CREATE POLICY "Admins can upload furniture studio files"
+  ON storage.objects FOR INSERT
+  WITH CHECK (bucket_id = 'furniture-studio' AND public.is_admin());
+CREATE POLICY "Admins can delete furniture studio files"
+  ON storage.objects FOR DELETE
+  USING (bucket_id = 'furniture-studio' AND public.is_admin());
+
+-- =============================================
+-- 7. 가구 스튜디오: 결과 요청사항(댓글)
+--    (2026-07-23, 마이그레이션 furniture_result_comments 로 적용됨)
+-- =============================================
+CREATE TABLE IF NOT EXISTS furniture_result_comments (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  project_id UUID NOT NULL REFERENCES furniture_projects(id) ON DELETE CASCADE,
+  result_id UUID NOT NULL REFERENCES furniture_results(id) ON DELETE CASCADE,
+  body TEXT NOT NULL,
+  created_by TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_furniture_result_comments_project
+  ON furniture_result_comments (project_id, created_at ASC);
+CREATE INDEX IF NOT EXISTS idx_furniture_result_comments_result
+  ON furniture_result_comments (result_id, created_at ASC);
+
+ALTER TABLE furniture_result_comments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Admins full access result comments" ON furniture_result_comments
+  FOR ALL USING (public.is_admin()) WITH CHECK (public.is_admin());

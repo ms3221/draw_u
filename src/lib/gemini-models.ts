@@ -11,6 +11,8 @@ export type ImageModel = {
   desc: string;
   /** 해상도별 장당 단가 (USD) */
   usd: Record<Resolution, number>;
+  /** 호출 라우팅용 (기본 google) */
+  provider?: "google" | "openai";
 };
 
 export const IMAGE_MODELS: ImageModel[] = [
@@ -26,7 +28,19 @@ export const IMAGE_MODELS: ImageModel[] = [
     desc: "최고 품질 · 최종 제안용",
     usd: { "1K": 0.134, "2K": 0.134, "4K": 0.24 },
   },
+  {
+    id: "gpt-image-2",
+    label: "GPT Image 2",
+    desc: "OpenAI · 비교 테스트용 (비용 추정치, OPENAI_API_KEY 필요)",
+    // 토큰 과금이라 해상도별 근사치 (medium 품질 고정, 픽셀 수 비례 추정)
+    usd: { "1K": 0.053, "2K": 0.21, "4K": 0.42 },
+    provider: "openai",
+  },
 ];
+
+export function isOpenAIModel(id: string): boolean {
+  return IMAGE_MODELS.find((m) => m.id === id)?.provider === "openai";
+}
 
 export const DEFAULT_MODEL = "gemini-3.1-flash-image";
 export const USD_TO_KRW = 1400;
@@ -56,11 +70,13 @@ export function nearestAspectRatio(width?: number, height?: number): string {
 }
 
 // 보정(편집) 유형. needsProduct=true 면 추가/교체할 제품 사진이 필요하다.
+// raw = 템플릿 없이 입력한 프롬프트를 그대로 모델에 전달 (이미지는 보정 대상 1장만).
 export const EDIT_TYPES = [
   { id: "add", label: "가구 추가", needsProduct: true, hint: "어디에 놓을지 (선택)" },
   { id: "remove", label: "가구 제거", needsProduct: false, hint: "무엇을 뺄지" },
   { id: "replace", label: "가구 교체", needsProduct: true, hint: "무엇을 바꿀지" },
   { id: "retouch", label: "분위기 보정", needsProduct: false, hint: "조명·톤·색감 등" },
+  { id: "raw", label: "직접 프롬프트", needsProduct: false, hint: "입력한 내용이 그대로 전달됩니다" },
 ] as const;
 
 export type EditType = (typeof EDIT_TYPES)[number]["id"];
