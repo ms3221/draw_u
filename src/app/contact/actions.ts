@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { notifyPartner } from "@/lib/partner-api";
 
 const NOTION_API_KEY = process.env.NOTION_API_KEY!;
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID!;
@@ -230,10 +231,14 @@ export async function submitInquiry(data: SubmitToNotionData) {
 
   // DB 저장도 실패가 Slack 알림을 막지 않도록 예외를 삼킨다.
   let dbSuccess = false;
+  // id 는 DB 자동증가(숫자)라 미리 정할 수 없고, anon 은 SELECT 권한이 없어 insert returning 도 못 받는다.
+  // 대신 접수 시각을 직접 넣어두고, Webhook 전송 시 (created_at, phone) 으로 id 를 다시 찾는다.
+  const createdAt = new Date().toISOString();
   try {
     const supabase = await createClient();
 
     const { error } = await supabase.from("contact_inquiries").insert({
+      created_at: createdAt,
       name: data.name,
       phone: data.phone,
       family_members: data.familyMembers,
@@ -268,11 +273,17 @@ export async function submitInquiry(data: SubmitToNotionData) {
   }
 
   // Notion/DB 성공 여부와 무관하게 Slack 알림은 반드시 보낸다.
-  try {
-    await notifySlack(data, notionResult, dbSuccess);
-  } catch (e) {
-    console.error("Slack 전송 예외:", e);
-  }
+  // 파트너 Webhook 은 DB 저장 성공 시에만 (그래야 상대가 id 로 재조회 가능). 둘은 병렬 전송.
+  await Promise.allSettled([
+    notifySlack(data, notionResult, dbSuccess).catch((e) =>
+      console.error("Slack 전송 예외:", e)
+    ),
+    dbSuccess
+      ? notifyPartner(createdAt, data.phone).catch((e) =>
+          console.error("파트너 Webhook 예외:", e)
+        )
+      : Promise.resolve(),
+  ]);
 
   return { success: dbSuccess, notionSynced: notionResult.success };
 }
